@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header id="head">
+         <h2>We offer the best thrift kicks</h2>
+          <H3>Please select an option of your own</H3>
+    </header>
+   <nav id="bar">
+        <a href="index.html">Home</a>|
+        <a href="products.html">Products</a>|
+        <a href="about.html">About us</a>|
+    </nav>
+    
+    
+    <main class="products">
+        <h3>Our Products</h3>
+        <div class="product-grid">
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="munich.jpg" alt="Classic Sneaker">
+                    <button class="view-btn" data-src="munich.jpg">View</button>
+                </div>
+                <h4>Classic Sneaker</h4>
+                <p class="price">$49.99</p>
+            </article>
+
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="dg.jpg" alt="DOLSE & GABBANA" >
+                    <button class="view-btn" data-src="dg.jpg">View</button>
+                </div>
+                <h4>Sport Runner</h4>
+                <p class="price">$59.99</p>
+            </article>
+
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="official.jpg" alt="Casual Low" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                    <button class="view-btn" data-src="official.jpg">View</button>
+                </div>
+                <h4>Casual Low</h4>
+                <p class="price">$39.99</p>
+            </article>
+
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="pumagreen.jpg" alt="Kids Mini PUMA" >
+                    <button class="view-btn" data-src="pumagreen.jpg">View</button>
+                </div>
+                <h4>Kids Mini</h4>
+                <p class="price">$29.99</p>
+            </article>
+
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="official.jpg" alt="Formal Leather" >
+                    <button class="view-btn" data-src="official.jpg">View</button>
+                </div>
+                <h4>Formal Leather</h4>
+                <p class="price">$69.99</p>
+            </article>
+
+            <article class="product-card">
+                <div class="product-image">
+                    <img src="openbrown.jpg"  alt="open LEATHER" >
+                    <button class="view-btn" data-src="openbrown.jpg">View</button>
+                </div>
+                <h4>Sport Pro</h4>
+                <p class="price">$89.99</p>
+            </article>
+
+             <article class="product-card">
+                <div class="product-image">
+                    <img src="nb.jpg"  alt="NEW BALANCESneaker" >
+                    <button class="view-btn" data-src="nb.jpg">View</button>
+                </div>
+                <h4>Sneaker</h4>
+                <p class="price">$89.99</p>
+            </article>
+
+             <article class="product-card">
+                <div class="product-image">
+                    <img src="pradafront.jpg" alt="Prada CHUNKY" >
+                    <button class="view-btn" data-src="pradafront.jpg">View</button>
+                </div>
+                <h4>Prada Front</h4>
+                <p class="price">$129.99</p>
+            </article>
+
+             <article class="product-card">
+                <div class="product-image">
+                    <img src="openwhite.jpg"  alt="open LEATHER" >
+                    <button class="view-btn" data-src="openwhite.jpg">View</button>
+                </div>
+                <h4>Open</h4>
+                <p class="price">$89.99</p>
+            </article>
+        </div>
+        <p class="note">Notes: place product images in an `images/` folder next to this file. If an image is missing a placeholder will appear.</p>
+    </main>
+    
+    <!-- Image viewer modal -->
+    <div id="image-modal" class="modal" aria-hidden="true">
+        <div class="modal-content" role="dialog" aria-modal="true">
+            <button class="modal-close" aria-label="Close viewer">×</button>
+            <img id="modal-image" src="" alt="Large product view">
+        </div>
+    </div>
+
+    <script>
+        // Delegate clicks for view buttons and modal
+        document.addEventListener('click', function(e){
+            const btn = e.target.closest('.view-btn');
+            if(btn){
+                const src = btn.dataset.src || '';
+                const modal = document.getElementById('image-modal');
+                const img = document.getElementById('modal-image');
+                img.src = src;
+                modal.classList.add('open');
+                modal.setAttribute('aria-hidden','false');
+                return;
+            }
+
+            if(e.target.closest('.modal-close')){
+                closeModal();
+                return;
+            }
+        });
+
+        function closeModal(){
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('open');
+            modal.setAttribute('aria-hidden','true');
+            document.getElementById('modal-image').src = '';
+        }
+
+        // Close when clicking outside modal-content
+        document.getElementById('image-modal').addEventListener('click', function(e){
+            if(e.target === this){
+                closeModal();
+            }
+        });
+
+        // --- Colorize product image backgrounds by sampling an average color ---
+        function averageRGB(img){
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const w = 32, h = 32;
+            canvas.width = w; canvas.height = h;
+            try{
+                ctx.drawImage(img, 0, 0, w, h);
+                const data = ctx.getImageData(0,0,w,h).data;
+                let r=0,g=0,b=0,count=0;
+                for(let i=0;i<data.length;i+=4){
+                    const alpha = data[i+3];
+                    if(alpha>125){ r+=data[i]; g+=data[i+1]; b+=data[i+2]; count++; }
+                }
+                if(count===0) return null;
+                r=Math.round(r/count); g=Math.round(g/count); b=Math.round(b/count);
+                return `rgb(${r},${g},${b})`;
+            }catch(err){
+                return null;
+            }
+        }
+
+        // Apply sampled color to each product-image container
+        document.querySelectorAll('.product-image img').forEach(img => {
+            const apply = () => {
+                const avg = averageRGB(img);
+                const parent = img.closest('.product-image');
+                if(avg){
+                    parent.style.background = `linear-gradient(rgba(255,255,255,0.55), rgba(255,255,255,0.55)), ${avg}`;
+                } else {
+                    parent.style.background = '#fafafa';
+                }
+            };
+
+            if(img.complete){
+                // small delay so image pixels are available
+                setTimeout(apply, 20);
+            } else {
+                img.addEventListener('load', apply);
+                img.addEventListener('error', ()=>{ img.closest('.product-image').style.background='#fafafa'; });
+            }
+        });
+    </script>
+</body>
+</html>
